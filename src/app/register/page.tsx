@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -16,11 +17,11 @@ export default function RegisterPage() {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, email, password })
     });
     if (res.ok) {
       setSuccess(true);
-      setTimeout(() => router.push("/login"), 1500);
+      // Onay bekleniyor mesajı
     } else {
       const data = await res.json();
       setError(data.error || "Kayıt başarısız oldu.");
@@ -40,6 +41,14 @@ export default function RegisterPage() {
           required
         />
         <input
+          type="email"
+          placeholder="E-posta"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="w-full mb-2 p-2 border rounded"
+          required
+        />
+        <input
           type="password"
           placeholder="Şifre"
           value={password}
@@ -48,7 +57,7 @@ export default function RegisterPage() {
           required
         />
         {error && <div className="text-red-500 mb-2">{error}</div>}
-        {success && <div className="text-green-600 mb-2">Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz...</div>}
+        {success && <div className="text-green-600 mb-2">Kayıt isteğiniz alınmıştır. Yönetici onayı bekleniyor.</div>}
         <button
           type="submit"
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
