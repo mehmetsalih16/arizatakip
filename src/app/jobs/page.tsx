@@ -3,27 +3,46 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/options";
 import { redirect } from "next/navigation";
 
-export default async function JobsPage() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect("/login");
+
+import React, { useState } from 'react';
+
+export default function JobsPageClient() {
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [error, setError] = useState(false);
+  const [ilce, setIlce] = useState('');
+  const [date1, setDate1] = useState('');
+  const [date2, setDate2] = useState('');
+
+  async function fetchJobs() {
+    let url = '/api/jobs?';
+    if (ilce) url += `ilce=${encodeURIComponent(ilce)}&`;
+    if (date1) url += `date1=${encodeURIComponent(date1)}&`;
+    if (date2) url += `date2=${encodeURIComponent(date2)}&`;
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) {
+      setError(true);
+      setJobs([]);
+    } else {
+      setError(false);
+      setJobs(await res.json());
+    }
   }
-  const h = await headers();
-  let baseUrl = 'http://localhost:3001';
-  const forwarded = h.get('x-forwarded-host');
-  if (forwarded) baseUrl = `http://${forwarded}`;
-  const res = await fetch(`${baseUrl}/api/jobs`, { cache: 'no-store' });
-  let jobs: any[] = [];
-  let error = false;
-  if (!res.ok) {
-    error = true;
-  } else {
-    jobs = await res.json();
-  }
+
+  // İlk yüklemede ve filtre değişince verileri çek
+  React.useEffect(() => {
+    fetchJobs();
+    // eslint-disable-next-line
+  }, [ilce, date1, date2]);
 
   return (
     <main className="p-8">
       <h1 className="text-2xl font-bold mb-4">İş Listesi</h1>
+      <div className="flex gap-4 mb-4">
+        <input type="text" placeholder="İlçe" value={ilce} onChange={e => setIlce(e.target.value)} className="border px-2 py-1" />
+        <input type="date" value={date1} onChange={e => setDate1(e.target.value)} className="border px-2 py-1" />
+        <input type="date" value={date2} onChange={e => setDate2(e.target.value)} className="border px-2 py-1" />
+        <button onClick={fetchJobs} className="bg-blue-600 text-white px-3 py-1 rounded">Filtrele</button>
+      </div>
       {error ? (
         <div>İşler yüklenemedi.</div>
       ) : (
