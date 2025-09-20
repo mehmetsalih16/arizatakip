@@ -15,16 +15,16 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body>
-        <nav className="bg-gray-800 text-white p-4 flex gap-4">
+        <nav className="bg-gray-800 text-white p-4 flex gap-4 items-center">
           <Link href="/jobs">İşler</Link>
           <Link href="/job-ekle">İş Ekle</Link>
           <Link href="/malzemeler">Malzemeler</Link>
           <Link href="/malzeme-ekle">Malzeme Ekle</Link>
           <Link href="/raporlar">Raporlar</Link>
+          <div className="flex-1" />
+          <Link href="/login">Giriş Yap</Link>
         </nav>
-        <div className="max-w-4xl mx-auto">
-          {children}
-        </div>
+        <div className="max-w-4xl mx-auto">{children}</div>
       </body>
     </html>
   );

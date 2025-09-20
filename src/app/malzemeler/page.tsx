@@ -1,7 +1,14 @@
 import { headers } from 'next/headers';
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/options";
+import { redirect } from "next/navigation";
 
 
 export default async function MalzemelerPage() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/login");
+  }
   const h = await headers();
   let baseUrl = 'http://localhost:3001';
   const forwarded = h.get('x-forwarded-host');
