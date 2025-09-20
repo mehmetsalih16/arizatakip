@@ -2,14 +2,10 @@
 
 import { headers } from 'next/headers';
 
-export default async function JobsPage() {
-  const h = headers();
+  const h = await headers();
   let baseUrl = 'http://localhost:3001';
-  try {
-    const getHeader = (hh: any) => (typeof hh.get === 'function' ? hh.get('x-forwarded-host') : undefined);
-    const forwarded = getHeader(h);
-    if (forwarded) baseUrl = `http://${forwarded}`;
-  } catch {}
+  const forwarded = h.get('x-forwarded-host');
+  if (forwarded) baseUrl = `http://${forwarded}`;
   const res = await fetch(`${baseUrl}/api/jobs`, { cache: 'no-store' });
   if (!res.ok) {
     return <div>İşler yüklenemedi.</div>;

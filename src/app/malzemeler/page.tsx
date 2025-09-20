@@ -5,16 +5,11 @@
 import { headers } from 'next/headers';
 
 
-export default async function MalzemelerPage() {
-  // Sunucu ortamında tam URL ile fetch yapılmalı
-  const h = headers();
+  // Next.js 15+ App Router'da headers() asenkron kullanılmalı
+  const h = await headers();
   let baseUrl = 'http://localhost:3001';
-  try {
-    // headers() bazen Promise dönebilir, bazen doğrudan ReadonlyHeaders döner
-    const getHeader = (hh: any) => (typeof hh.get === 'function' ? hh.get('x-forwarded-host') : undefined);
-    const forwarded = getHeader(h);
-    if (forwarded) baseUrl = `http://${forwarded}`;
-  } catch {}
+  const forwarded = h.get('x-forwarded-host');
+  if (forwarded) baseUrl = `http://${forwarded}`;
   const res = await fetch(`${baseUrl}/api/malzemeler`, { cache: 'no-store' });
   if (!res.ok) {
     return <div>Malzemeler yüklenemedi.</div>;

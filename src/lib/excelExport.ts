@@ -1,5 +1,5 @@
 // Excel dosyası oluşturma fonksiyonu
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 import path from 'path';
 import { ensureDirExists } from './fileUtils';
 
